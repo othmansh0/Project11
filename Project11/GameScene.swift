@@ -35,6 +35,27 @@ class GameScene: SKScene {
         background.blendMode = .replace
         background.zPosition = -1
         addChild(background)
+        //adds a physics body to the whole scene that is a line on each edge, effectively acting like a container for the scene
+  
+        physicsBody = SKPhysicsBody(edgeLoopFrom: frame)
+
+    }
+    
+    //This method gets called (in UIKit and SpriteKit) whenever someone starts touching their device
+    override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
+        //It's possible touching with multiple fingers at the same time, so we get passed a new data type called Set
+        guard let touch = touches.first else { return }
+        
+        //to know where the screen was touched,self - i.e., the game scene
+        let location = touch.location(in: self)
+        
+        //generates a node filled with a color (red) at a size (64x64
+        let box = SKSpriteNode(color: .red, size: CGSize(width: 64, height: 64))
+      
+        // adds a physics body to the box that is a rectangle of the same size as the box
+        box.physicsBody = SKPhysicsBody(rectangleOf: CGSize(width: 64, height: 64))
+        box.position = location
+        addChild(box)
         
     }
     

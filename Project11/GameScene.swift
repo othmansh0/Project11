@@ -24,10 +24,20 @@
 
 //isDynamic property of a physics body. When this is true, the object will be moved by the physics simulator based on gravity and collisions. When it's false the object will still collide with other things, but it won't ever be moved as a result
 
+//----------------------------------------------
+
+//by adding a physics body to the balls and bouncers we already have some collision detection because the objects bounce off each other. But it's not being detected by us so:
+
+//1.Add rectangle physics to our slots.
+//2.Name the slots so we know which is which, then name the balls too.
+//3.Make our scene the contact delegate of the physics world – this means, "tell us when contact occurs between two bodies."
+//4.Create a method that handles contacts and does something appropriate.
+
+
 import SpriteKit
 
 
-class GameScene: SKScene {
+class GameScene: SKScene,SKPhysicsContactDelegate {
     
    
     
@@ -71,6 +81,7 @@ class GameScene: SKScene {
         ball.physicsBody = SKPhysicsBody(circleOfRadius: ball.size.width / 2)
         ball.physicsBody?.restitution = 0.4
         ball.position = location
+        ball.name = "ball"
         addChild(ball)
         
         
@@ -107,11 +118,18 @@ class GameScene: SKScene {
         if isGood {
             slotBase = SKSpriteNode(imageNamed: "slotBaseGood")
             slotGlow = SKSpriteNode(imageNamed: "slotGlowGood")
+            slotBase.name = "good"
         }
         else {
             slotBase = SKSpriteNode(imageNamed: "slotBaseBad")
             slotGlow = SKSpriteNode(imageNamed: "slotGlowBad")
+            slotBase.name = "bad"
         }
+        
+        //Add rectangle physics to our slots
+        slotBase.physicsBody = SKPhysicsBody(rectangleOf: slotBase.size)
+        //needs to be non-dynamic because we don't want it to move out of the way when a player ball hits
+        slotBase.physicsBody?.isDynamic = false
         
         slotBase.position = position
         slotGlow.position = position

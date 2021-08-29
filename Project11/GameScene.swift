@@ -20,7 +20,9 @@
 //"just draw it, ignoring any alpha values,"
 //which makes it fast for things without gaps such as our background
 
+//-----------------------------------------------------------------------------------------
 
+//isDynamic property of a physics body. When this is true, the object will be moved by the physics simulator based on gravity and collisions. When it's false the object will still collide with other things, but it won't ever be moved as a result
 
 import SpriteKit
 
@@ -38,6 +40,14 @@ class GameScene: SKScene {
         //adds a physics body to the whole scene that is a line on each edge, effectively acting like a container for the scene
   
         physicsBody = SKPhysicsBody(edgeLoopFrom: frame)
+        
+   
+        makeBouncer(at: CGPoint(x: 0, y: 0))
+        makeBouncer(at: CGPoint(x: 256, y: 0))
+        makeBouncer(at: CGPoint(x: 512, y: 0))
+        makeBouncer(at: CGPoint(x: 768, y: 0))
+        makeBouncer(at: CGPoint(x: 1024, y: 0))
+        
 
     }
     
@@ -49,17 +59,41 @@ class GameScene: SKScene {
         //to know where the screen was touched,self - i.e., the game scene
         let location = touch.location(in: self)
         
-        //generates a node filled with a color (red) at a size (64x64
-        let box = SKSpriteNode(color: .red, size: CGSize(width: 64, height: 64))
-      
-        // adds a physics body to the box that is a rectangle of the same size as the box
-        box.physicsBody = SKPhysicsBody(rectangleOf: CGSize(width: 64, height: 64))
-        box.position = location
-        addChild(box)
+        
+        let ball = SKSpriteNode(imageNamed: "ballRed")
+        
+//        circleOfRadius initializer for SKPhysicsBody to add circular physics
+        ball.physicsBody = SKPhysicsBody(circleOfRadius: ball.size.width / 2)
+        ball.physicsBody?.restitution = 0.4
+        ball.position = location
+        addChild(ball)
+        
+        
+        
+        
+        
+        
+        
+        
+        
+//        //generates a node filled with a color (red) at a size (64x64
+//        let box = SKSpriteNode(color: .red, size: CGSize(width: 64, height: 64))
+//
+//        // adds a physics body to the box that is a rectangle of the same size as the box
+//        box.physicsBody = SKPhysicsBody(rectangleOf: CGSize(width: 64, height: 64))
+//        box.position = location
+//        addChild(box)
         
     }
     
-    
+    func makeBouncer(at position: CGPoint){
+        
+        let bouncer = SKSpriteNode(imageNamed: "bouncer")
+        bouncer.position = position
+        bouncer.physicsBody = SKPhysicsBody(circleOfRadius: bouncer.size.width / 2.0)
+        bouncer.physicsBody?.isDynamic = false
+        addChild(bouncer)
+    }
    
     
 }

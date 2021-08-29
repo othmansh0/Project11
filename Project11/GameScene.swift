@@ -41,6 +41,9 @@ class GameScene: SKScene,SKPhysicsContactDelegate {
     
    
     
+    
+    
+    //you bounce everything,tell us about every single bounce
     override func didMove(to view: SKView) {
         let background = SKSpriteNode(imageNamed: "background")
         background.position = CGPoint(x: 512, y: 384)
@@ -50,7 +53,7 @@ class GameScene: SKScene,SKPhysicsContactDelegate {
         //adds a physics body to the whole scene that is a line on each edge, effectively acting like a container for the scene
   
         physicsBody = SKPhysicsBody(edgeLoopFrom: frame)
-        
+        physicsWorld.contactDelegate = self
    
         makeBouncer(at: CGPoint(x: 0, y: 0))
         makeBouncer(at: CGPoint(x: 256, y: 0))
@@ -80,6 +83,10 @@ class GameScene: SKScene,SKPhysicsContactDelegate {
 //        circleOfRadius initializer for SKPhysicsBody to add circular physics
         ball.physicsBody = SKPhysicsBody(circleOfRadius: ball.size.width / 2)
         ball.physicsBody?.restitution = 0.4
+        
+        //ContactTestBitMask which collisions you want to know about,by default it's set to nth
+        //collisionBitMask tell us which nodes should i bump into,by default is set to everything
+        ball.physicsBody?.contactTestBitMask = ball.physicsBody?.collisionBitMask ?? 0
         ball.position = location
         ball.name = "ball"
         addChild(ball)
@@ -139,7 +146,7 @@ class GameScene: SKScene,SKPhysicsContactDelegate {
         // To rotate the glow:
         let spin = SKAction.rotate(byAngle: .pi, duration: 10)
         let spinForever = SKAction.repeatForever(spin)
-        slotGlow.run(spin)
+        slotGlow.run(spinForever)
     }
    
     

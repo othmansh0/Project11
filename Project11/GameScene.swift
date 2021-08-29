@@ -42,7 +42,25 @@ import SpriteKit
 
 class GameScene: SKScene,SKPhysicsContactDelegate {
     
-   
+    var scoreLabel: SKLabelNode!
+    var score = 0 {
+        didSet{
+            scoreLabel.text = "Score: \(score)"
+        }
+    }
+    var editLabel: SKLabelNode!
+    
+    var editingMode: Bool = false {
+        didSet {
+            if editingMode {
+                editLabel.text = "Done"
+            } else {
+                editLabel.text = "Edit"
+            }
+            
+        }
+    }
+    
     
     
     
@@ -55,6 +73,17 @@ class GameScene: SKScene,SKPhysicsContactDelegate {
         addChild(background)
         //adds a physics body to the whole scene that is a line on each edge, effectively acting like a container for the scene
   
+        scoreLabel = SKLabelNode(fontNamed: "Chalkduster")
+        scoreLabel.horizontalAlignmentMode = .right
+        scoreLabel.position = CGPoint(x: 980, y: 700)
+        addChild(scoreLabel)
+        
+         editLabel = SKLabelNode(fontNamed: "Chalkduster")
+        editLabel.text = "Edit"
+        editLabel.position = CGPoint(x: 80, y: 700)
+        addChild(editLabel)
+        
+        
         physicsBody = SKPhysicsBody(edgeLoopFrom: frame)
         physicsWorld.contactDelegate = self
    
@@ -82,19 +111,55 @@ class GameScene: SKScene,SKPhysicsContactDelegate {
         //to know where the screen was touched,self - i.e., the game scene
         let location = touch.location(in: self)
         
-        
-        let ball = SKSpriteNode(imageNamed: "ballRed")
-        
-//        circleOfRadius initializer for SKPhysicsBody to add circular physics
-        ball.physicsBody = SKPhysicsBody(circleOfRadius: ball.size.width / 2)
-        ball.physicsBody?.restitution = 0.4
-        
-        //ContactTestBitMask which collisions you want to know about,by default it's set to nth
-        //collisionBitMask tell us which nodes should i bump into,by default is set to everything
-        ball.physicsBody?.contactTestBitMask = ball.physicsBody?.collisionBitMask ?? 0
-        ball.position = location
-        ball.name = "ball"
-        addChild(ball)
+        //detecting whether the user tapped edit/done button or to create ball:
+        //1.what nodes exists at this location
+        let objects = nodes(at: location)
+        //edit button got tapped
+        if objects.contains(editLabel) {
+            editingMode.toggle()
+        } else {
+           
+            if editingMode {
+                //if we are in editingMode we add blocks of random sizes
+                let size = CGSize(width: Int.random(in: 16...128), height: 16)
+                let box = SKSpriteNode(color: UIColor.init(red: CGFloat.random(in: 0...1), green: CGFloat.random(in: 0...1), blue: CGFloat.random(in: 0...1), alpha: 1), size: size)
+                box.zRotation = CGFloat.random(in: 0...3)
+                box.position = location
+                
+                box.physicsBody = SKPhysicsBody(rectangleOf: box.size)
+                box.physicsBody?.isDynamic = false
+                addChild(box)
+                
+                
+            } else {
+                //not in editingMode
+                //tapped to create a ball
+                let ball = SKSpriteNode(imageNamed: "ballRed")
+                
+        //        circleOfRadius initializer for SKPhysicsBody to add circular physics
+                ball.physicsBody = SKPhysicsBody(circleOfRadius: ball.size.width / 2)
+                ball.physicsBody?.restitution = 0.4
+                
+                //ContactTestBitMask which collisions you want to know about,by default it's set to nth
+                //collisionBitMask tell us which nodes should i bump into,by default is set to everything
+                ball.physicsBody?.contactTestBitMask = ball.physicsBody?.collisionBitMask ?? 0
+                ball.position = location
+                ball.name = "ball"
+                addChild(ball)
+                
+            }
+            
+            
+            
+            
+            
+            
+           
+   
+            
+        }
+       
+
         
         
         
@@ -158,8 +223,10 @@ class GameScene: SKScene,SKPhysicsContactDelegate {
     func collision(between ball: SKNode, object: SKNode){
         if object.name == "good" {
             destroy(ball: ball)
+            score += 1
         } else if object.name == "bad" {
             destroy(ball: ball)
+            score -= 1
         }
     
     }

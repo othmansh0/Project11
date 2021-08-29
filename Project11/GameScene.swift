@@ -33,6 +33,9 @@
 //3.Make our scene the contact delegate of the physics world – this means, "tell us when contact occurs between two bodies."
 //4.Create a method that handles contacts and does something appropriate.
 
+//-----------------------------------------------------------------------------------------
+
+//SKNode is the parent class of SKSpriteNode
 
 import SpriteKit
 
@@ -55,16 +58,18 @@ class GameScene: SKScene,SKPhysicsContactDelegate {
         physicsBody = SKPhysicsBody(edgeLoopFrom: frame)
         physicsWorld.contactDelegate = self
    
+        makeSlot(at: CGPoint(x: 128, y: 0), isGood: true)
+        makeSlot(at: CGPoint(x: 384, y: 0), isGood: false)
+        makeSlot(at: CGPoint(x: 640, y: 0), isGood: true)
+        makeSlot(at: CGPoint(x: 896, y: 0), isGood: false)
+        
         makeBouncer(at: CGPoint(x: 0, y: 0))
         makeBouncer(at: CGPoint(x: 256, y: 0))
         makeBouncer(at: CGPoint(x: 512, y: 0))
         makeBouncer(at: CGPoint(x: 768, y: 0))
         makeBouncer(at: CGPoint(x: 1024, y: 0))
         
-        makeSlot(at: CGPoint(x: 128, y: 0), isGood: true)
-        makeSlot(at: CGPoint(x: 384, y: 0), isGood: false)
-        makeSlot(at: CGPoint(x: 640, y: 0), isGood: true)
-        makeSlot(at: CGPoint(x: 896, y: 0), isGood: false)
+    
         
 
     }
@@ -149,5 +154,30 @@ class GameScene: SKScene,SKPhysicsContactDelegate {
         slotGlow.run(spinForever)
     }
    
+    //will be called when a ball collides with something else
+    func collision(between ball: SKNode, object: SKNode){
+        if object.name == "good" {
+            destroy(ball: ball)
+        } else if object.name == "bad" {
+            destroy(ball: ball)
+        }
     
+    }
+    
+    func destroy(ball: SKNode){
+        //removes a node from your node tree.
+        ball.removeFromParent()
+    }
+    
+    // contact method needs to determine which one is the ball so that it can call collisionBetween() with the correct parameters
+    func didBegin(_ contact: SKPhysicsContact) {
+        guard let nodeA = contact.bodyA.node else {return}
+        guard let nodeB = contact.bodyB.node else {return}
+        
+        if nodeA.name == "ball" {
+            collision(between: nodeA, object: nodeB)
+        } else if nodeB.name == "ball" {
+            collision(between: nodeB, object: nodeA)
+        }
+    }
 }

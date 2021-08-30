@@ -45,6 +45,12 @@ import SpriteKit
 
 
 class GameScene: SKScene,SKPhysicsContactDelegate {
+    var ballsLabel: SKLabelNode!
+    var numberOfBalls = 5 {
+        didSet{
+            ballsLabel.text = "Balls: \(numberOfBalls)"
+        }
+    }
     
     var scoreLabel: SKLabelNode!
     var score = 0 {
@@ -82,6 +88,7 @@ class GameScene: SKScene,SKPhysicsContactDelegate {
         //adds a physics body to the whole scene that is a line on each edge, effectively acting like a container for the scene
   
         scoreLabel = SKLabelNode(fontNamed: "Chalkduster")
+        scoreLabel.text = "Score: \(score)"
         scoreLabel.horizontalAlignmentMode = .right
         scoreLabel.position = CGPoint(x: 980, y: 700)
         addChild(scoreLabel)
@@ -91,6 +98,12 @@ class GameScene: SKScene,SKPhysicsContactDelegate {
         editLabel.position = CGPoint(x: 80, y: 700)
         addChild(editLabel)
         
+        
+        ballsLabel = SKLabelNode(fontNamed: "Chalkduster")
+        ballsLabel.horizontalAlignmentMode = .right
+        ballsLabel.text = "Balls: \(numberOfBalls)"
+        ballsLabel.position = CGPoint(x: 980, y: 670)
+        addChild(ballsLabel)
         
         physicsBody = SKPhysicsBody(edgeLoopFrom: frame)
         physicsWorld.contactDelegate = self
@@ -135,11 +148,12 @@ class GameScene: SKScene,SKPhysicsContactDelegate {
                 box.position = location
                 
                 box.physicsBody = SKPhysicsBody(rectangleOf: box.size)
+                box.name = "box"
                 box.physicsBody?.isDynamic = false
                 addChild(box)
                 
                 
-            } else {
+            } else if numberOfBalls > 0 {
                 //not in editingMode
                 //tapped to create a ball
                
@@ -157,28 +171,17 @@ class GameScene: SKScene,SKPhysicsContactDelegate {
                 ball.position.y = 700
                 ball.name = "ball"
                 addChild(ball)
+                numberOfBalls -= 1
+                
+            } else {
+                let ac = UIAlertController(title: "Good Game", message: "your score \(score)", preferredStyle: .alert)
+                ac.addAction(UIAlertAction(title: "OK", style: .default))
+                //present??
                 
             }
-            
-            
-            
-            
-            
-            
-           
-   
-            
+              
         }
        
-
-        
-        
-        
-        
-        
-        
-        
-        
         
 //        //generates a node filled with a color (red) at a size (64x64
 //        let box = SKSpriteNode(color: .red, size: CGSize(width: 64, height: 64))
@@ -235,6 +238,7 @@ class GameScene: SKScene,SKPhysicsContactDelegate {
         if object.name == "good" {
             destroy(ball: ball)
             score += 1
+            numberOfBalls += 1
         } else if object.name == "bad" {
             destroy(ball: ball)
             score -= 1
@@ -263,5 +267,16 @@ class GameScene: SKScene,SKPhysicsContactDelegate {
         } else if nodeB.name == "ball" {
             collision(between: nodeB, object: nodeA)
         }
+        
+        if nodeA.name == "box" {
+            nodeA.removeFromParent()
+        
+        }
+        else if nodeB.name == "box" {
+            nodeA.removeFromParent()
+        }
+        
+        
+        
     }
 }

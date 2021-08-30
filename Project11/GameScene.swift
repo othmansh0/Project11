@@ -232,6 +232,12 @@ class GameScene: SKScene,SKPhysicsContactDelegate {
     }
     
     func destroy(ball: SKNode){
+//        SKEmitterNode class designed to create particle effects in SpriteKit games
+        if let fireParticles = SKEmitterNode(fileNamed: "FireParticles"){
+            fireParticles.position = ball.position
+            addChild(fireParticles)
+        }
+        
         //removes a node from your node tree.
         ball.removeFromParent()
     }

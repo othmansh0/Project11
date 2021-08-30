@@ -24,6 +24,9 @@
 
 //isDynamic property of a physics body. When this is true, the object will be moved by the physics simulator based on gravity and collisions. When it's false the object will still collide with other things, but it won't ever be moved as a result
 
+//= false allows the node to interact with other physics bodies without changing its position.
+
+
 //----------------------------------------------
 
 //by adding a physics body to the balls and bouncers we already have some collision detection because the objects bounce off each other. But it's not being detected by us so:
@@ -37,6 +40,7 @@
 
 //SKNode is the parent class of SKSpriteNode
 
+// collisionBitMask determines what objects a node bounces off, and contactTestBitMask determines which collisions are reported to us
 import SpriteKit
 
 
@@ -60,12 +64,16 @@ class GameScene: SKScene,SKPhysicsContactDelegate {
             
         }
     }
+    var ballsNames = ["ballBlue","ballRed","ballCyan","ballGreen","ballGrey","ballPurple","ballGrey","ballYellow"]
     
     
     
     
     //you bounce everything,tell us about every single bounce
     override func didMove(to view: SKView) {
+        
+       
+        
         let background = SKSpriteNode(imageNamed: "background")
         background.position = CGPoint(x: 512, y: 384)
         background.blendMode = .replace
@@ -134,7 +142,9 @@ class GameScene: SKScene,SKPhysicsContactDelegate {
             } else {
                 //not in editingMode
                 //tapped to create a ball
-                let ball = SKSpriteNode(imageNamed: "ballRed")
+               
+                
+                let ball = SKSpriteNode(imageNamed: ballsNames[Int.random(in: 0..<ballsNames.count)])
                 
         //        circleOfRadius initializer for SKPhysicsBody to add circular physics
                 ball.physicsBody = SKPhysicsBody(circleOfRadius: ball.size.width / 2)

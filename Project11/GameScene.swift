@@ -154,6 +154,7 @@ class GameScene: SKScene,SKPhysicsContactDelegate {
                 //collisionBitMask tell us which nodes should i bump into,by default is set to everything
                 ball.physicsBody?.contactTestBitMask = ball.physicsBody?.collisionBitMask ?? 0
                 ball.position = location
+                ball.position.y = 700
                 ball.name = "ball"
                 addChild(ball)
                 
